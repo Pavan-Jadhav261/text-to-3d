@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Viewer</title>
+    <!-- Import the component -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: transparent; /* Allow iframe transparency */
+        }
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            --poster-color: transparent;
+        }
+        #error-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffcccc;
+            background: rgba(50, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <model-viewer 
+        id="viewer"
+        src="" 
+        alt="A 3D model" 
+        auto-rotate 
+        camera-controls 
+        shadow-intensity="1" 
+        environment-image="neutral"
+        exposure="1"
+        loading="eager"
+        camera-orbit="45deg 55deg 2.5m"
+    >
+        <div slot="progress-bar"></div>
+    </model-viewer>
+
+    <div id="error-message"></div>
+
+    <script>
+        // Get the model URL from query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const modelUrl = urlParams.get('model');
+        const viewer = document.getElementById('viewer');
+        const errorDiv = document.getElementById('error-message');
+
+        if (modelUrl) {
+            // Decode the URL if necessary, though get() usually handles it
+            viewer.src = modelUrl;
+            
+            // Handle load errors
+            viewer.addEventListener('error', (e) => {
+                console.error("Model load error:", e);
+                // Note: e.detail usually contains error details
+                const msg = e.detail && e.detail.type ? e.detail.type : "Unknown error";
+                errorDiv.textContent = "Error loading model: " + msg;
+                errorDiv.style.display = 'block';
+            });
+
+            // Optional: Log when loaded
+            viewer.addEventListener('load', () => {
+                console.log("Model loaded successfully");
+            });
+
+        } else {
+            console.warn("No model URL provided in query parameters.");
+            // Optionally show a placeholder or keep empty
+        }
+    </script>
+</body>
+</html>

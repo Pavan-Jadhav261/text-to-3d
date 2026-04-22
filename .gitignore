@@ -1,0 +1,12 @@
+# Build and deps
+node_modules/
+.next/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Local temp
+tsconfig.tsbuildinfo
+codex-write-test.txt
